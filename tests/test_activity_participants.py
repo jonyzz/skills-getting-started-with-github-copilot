@@ -19,19 +19,31 @@ client = TestClient(app)
 
 
 def test_signup_rejects_duplicate_email():
+    # Arrange
+    activity_name = "Chess Club"
+    email = "michael@mergington.edu"
+
+    # Act
     response = client.post(
-        "/activities/Chess Club/signup?email=michael@mergington.edu"
+        f"/activities/{activity_name}/signup?email={email}"
     )
 
+    # Assert
     assert response.status_code == 400
     assert response.json()["detail"] == "Student already signed up for this activity"
 
 
 def test_unregister_removes_participant_from_activity():
+    # Arrange
+    activity_name = "Chess Club"
+    email = "michael@mergington.edu"
+
+    # Act
     response = client.delete(
-        "/activities/Chess Club/participants/michael@mergington.edu"
+        f"/activities/{activity_name}/participants/{email}"
     )
 
+    # Assert
     assert response.status_code == 200
-    assert response.json()["message"] == "Removed michael@mergington.edu from Chess Club"
-    assert "michael@mergington.edu" not in activities["Chess Club"]["participants"]
+    assert response.json()["message"] == f"Removed {email} from {activity_name}"
+    assert email not in activities[activity_name]["participants"]
